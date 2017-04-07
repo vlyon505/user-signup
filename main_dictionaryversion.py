@@ -133,34 +133,29 @@ class Sign_up(webapp2.RequestHandler):
         verify = self.request.get('verify')
         email = self.request.get('email')
 
-        error_username = ""
-        error_password = ""
-        error_verify = ""
-        error_email = ""
+        form_variables = {}
+
+        form_variables['username'] = username     # { 'username': username }
+        form_variables['email'] = email
 
         if not valid_username(username):
             have_error = True
-            error_username = "Sorry, that's not a valid username."
+            form_variables['error_username'] = "Sorry, that's not a valid username."
 
         if not valid_password(password):
             have_error = True
-            error_password = "Sorry, that wasn't a valid password."
+            form_variables['error_password'] = "Sorry, that wasn't a valid password."
 
         elif password != verify:
             have_error = True
-            error_verify = "Your passwords didn't match."
+            form_variables['error_verify'] = "Your passwords didn't match."
 
         if not valid_email(email):
             have_error = True
-            error_email = "That's not a valid email address."
+            form_variables['error_email'] = "That's not a valid email address."
 
         if have_error:
-            self.WriteForm(username=username,
-                            email=email,
-                            error_username=error_username,
-                            error_password=error_password,
-                            error_email=error_email,
-                            error_verify=error_verify)
+            self.WriteForm(**form_variables)
 
         else:
             self.redirect('/welcome?username=' + username)
